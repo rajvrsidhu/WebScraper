@@ -168,10 +168,3 @@ companies.head(10)
 
 # Export the DataFrame to an Excel file
 companies.to_excel(r"C:\Users\RajveerSingh\OneDrive - 2X LLC\Workspcace VS Code\GitHub Repos\Insight Partners Web Scraping\Companies.xlsx",index=False)
-
-# Unused testing phase of the code
-'''
-test=companies
-test[['slug','name','location','color','verticals','stage','logo','Links']]=test[['slug','name','location','color','verticals','stage','logo','Links']].astype(object)
-test.info()
-'''
