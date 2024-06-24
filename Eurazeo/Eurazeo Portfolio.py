@@ -82,7 +82,7 @@ for page in range(0, 37+1):
 # Convert to DataFrame
 companies = pd.DataFrame(companies, columns=['Company Name', 'Description', 'Tag', 'Status', 'Investment Date', 'Sector', 'Location', 'Website'])
 all_companies = companies
-# Filter to only thos that are in the current portfolio
+# Filter to only those that are in the current portfolio
 companies = companies[companies['Status']=="In portfolio"]
 
 # Export the DataFrame to an Excel file
