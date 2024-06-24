@@ -57,7 +57,7 @@ url1 = "https://www.insightpartners.com/wp-json/insight/v1/get-companies"
 
 # Loop through the pages to scrape data
 for page in range(1,43+1):
-    print("Scraping ...",page)
+    print("Scraping Page ...",page)
     
     # Define query parameters for the request
     querystring = {"status[]":"Current Investment","page":f"{page}","search":"","user_id":"","featured_enabled":"true"}
