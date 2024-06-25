@@ -58,6 +58,7 @@ for page in range(0, 37+1):
     json_data = response.json()
     
     # Extract HTML content from the JSON response
+    # Doing this as the JSON isn't structured right so we're treating is as a str
     for item in json_data:
         if 'data' in item:
             soup = BeautifulSoup(item['data'], 'html.parser')

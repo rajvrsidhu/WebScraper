@@ -20,7 +20,7 @@ headers = {
 }
 
 # Send a GET request to the URL with the specified headers
-response = requests.request("GET", url, headers=headers)
+response = requests.request("GET", url, headers=headers) #requests.get is viable
 
 # Parse the HTML content of the response using BeautifulSoup
 soup = BeautifulSoup(response.content, 'html.parser')
