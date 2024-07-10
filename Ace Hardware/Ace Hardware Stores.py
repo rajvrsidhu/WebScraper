@@ -38,6 +38,3 @@ df_store_data.columns=header
 
 # Print the resulting dataframe
 df_store_data
-
-# Export the DataFrame to an Excel file
-df_store_data.to_excel(r"C:\Users\RajveerSingh\OneDrive - 2X LLC\Workspcace VS Code\GitHub Repos\WebScraper\Ace Hardware\Stores.xlsx",index=False)

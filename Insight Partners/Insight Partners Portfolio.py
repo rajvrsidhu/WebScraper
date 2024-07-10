@@ -163,8 +163,5 @@ companies['twitter']=companies['links'].apply(extract_twitter)
 companies['facebook']=companies['links'].apply(extract_facebook)
 companies['location']=companies['location'].str.replace("No Data Available, ","")
 
-# Display the first 10 rows of the DataFrame
-companies.head(10)
-
-# Export the DataFrame to an Excel file
-companies.to_excel(r"C:\Users\RajveerSingh\OneDrive - 2X LLC\Workspcace VS Code\GitHub Repos\Insight Partners Web Scraping\Companies.xlsx",index=False)
+# Print the resulting dataframe
+companies

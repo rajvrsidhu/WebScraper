@@ -86,5 +86,5 @@ all_companies = companies
 # Filter to only those that are in the current portfolio
 companies = companies[companies['Status']=="In portfolio"]
 
-# Export the DataFrame to an Excel file
-companies.to_excel(r"C:\Users\RajveerSingh\OneDrive - 2X LLC\Workspcace VS Code\GitHub Repos\WebScraper\Eurazeo\Companies.xlsx",index=False)
+# Print the resulting dataframe
+companies

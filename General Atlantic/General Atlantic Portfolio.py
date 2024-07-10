@@ -60,6 +60,6 @@ for page in range(1,15+1):
     
 # Create a DataFrame from the collected data
 companies = pd.DataFrame(company_extract, columns=['Name', 'Sector', 'Headquarters', 'Date Invested', 'Website'])
+
+# Print the resulting dataframe
 companies
-# Export the DataFrame to an Excel file
-companies.to_excel(r"C:\Users\RajveerSingh\OneDrive - 2X LLC\Workspcace VS Code\GitHub Repos\WebScraper\General Atlantic\Companies.xlsx",index=False)
