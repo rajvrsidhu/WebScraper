@@ -50,118 +50,128 @@ def extract_facebook(lst_str):
     return ''
 
 # Initialize an empty DataFrame to store company information
-companies=pd.DataFrame()
+companies = pd.DataFrame()
 
 # URL to fetch the list of companies
 url1 = "https://www.insightpartners.com/wp-json/insight/v1/get-companies"
 
 # Loop through the pages to scrape data
-for page in range(1,43+1):
-    print("Scraping Page ...",page)
+for page in range(1, 65+1):
+    print("Scraping Page ...", page)
     
     # Define query parameters for the request
-    querystring = {"status[]":"Current Investment","page":f"{page}","search":"","user_id":"","featured_enabled":"true"}
-
-    # Define request headers
+    querystring = {"page": f"{page}", "search": "", "user_id": "", "featured_enabled": "true"}
+    
     headers = {
         "accept": "application/json, text/plain, */*",
-        "accept-language": "en-US,en;q=0.9",
-        "cookie": "_biz_uid=d5c3bd72c38e4c61c58f92991edd4f99; _mkto_trk=id:936-JAF-209&token:_mch-insightpartners.com-1718181682785-77787; _biz_flagsA=%7B%22Version%22%3A1%2C%22ViewThrough%22%3A%221%22%2C%22Mkto%22%3A%221%22%2C%22XDomain%22%3A%221%22%7D; _gd_visitor=0aeb5227-5c53-48f7-84cc-08f727698571; sliguid=f27a4d0d-b7e2-4f26-9b1d-0daa85b4ca28; slirequested=true; _hjSessionUser_2846427=eyJpZCI6IjgzYWUxYmYxLWZmZGYtNTRhNy05NmUxLTdlYjcyY2VjZTgyNCIsImNyZWF0ZWQiOjE3MTgxODE2ODQ3MTcsImV4aXN0aW5nIjp0cnVlfQ==; _ga=GA1.1.582262255.1718181683; _hjSession_2846427=eyJpZCI6ImIyYWQ5ODI2LWQ4ZTEtNDY0Zi1iNGUzLTZiMjdmY2UzZmViZSIsImMiOjE3MTkwNjI4OTk1MTAsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; slireg=https://scout.us1.salesloft.com; _gd_session=a79d5bb9-71c4-47a9-88af-e2e217fd88bb; _ga_R6M33R23CY=GS1.1.1719062899.14.1.1719062910.0.0.0; _biz_nA=94; _biz_pendingA=%5B%5D",
-        "priority": "u=1, i",
         "referer": "https://www.insightpartners.com/portfolio/",
-        "sec-ch-ua": "\"Not/A)Brand\";v=\"8\", \"Chromium\";v=\"126\", \"Microsoft Edge\";v=\"126\"",
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": "\"Windows\"",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     }
-
-    # Send GET request to fetch company data
+    
+    # Send GET request
     response = requests.get(url1, headers=headers, params=querystring)
+    data = response.json()
+    new_companies = pd.DataFrame(json.loads(data)['rows'])
+    companies = pd.concat([companies, new_companies], ignore_index=True)
 
-    # Parse the JSON response
-    string = response.json()
-    data = json.loads(string)
-    
-    # Convert the 'rows' field in the JSON response to a DataFrame
-    new_companies=pd.DataFrame(data['rows'])
-    
-    # Append the new company data to the main DataFrame
-    companies=pd.concat([companies,new_companies],ignore_index=True)
-    
-    
-# Display the companies DataFrame
 print(companies.head(5))
 
 # Initialize a list to store company links
 company_links = []
 
+# Initialize lists to store all the additional fields
+investment_team_list = []
+sectors_list = []
+tags_list = []
+initial_investment_list = []
+status_list = []
+
 # URL to fetch company-specific content
 url2 = "https://www.insightpartners.com/wp-json/insight/v1/get-company-content"
 
-# Loop through each company ID to fetch detailed information
-for id in companies['id']:
-    print("Scraping Company with ID: ",id)
+# Extract details from each company
+for company_id in companies['id']:
+    print("Scraping Company with ID: ", company_id)
     
-    # Define query parameters for the request
-    querystring = {"id":f"{id}"}
-
-    #payload = ""
-    # Define request headers
-    headers = {
-        "accept": "application/json, text/plain, */*",
-        "accept-language": "en-US,en;q=0.9",
-        "cookie": "_biz_uid=d5c3bd72c38e4c61c58f92991edd4f99; _mkto_trk=id:936-JAF-209&token:_mch-insightpartners.com-1718181682785-77787; _biz_flagsA=%7B%22Version%22%3A1%2C%22ViewThrough%22%3A%221%22%2C%22Mkto%22%3A%221%22%2C%22XDomain%22%3A%221%22%7D; _gd_visitor=0aeb5227-5c53-48f7-84cc-08f727698571; sliguid=f27a4d0d-b7e2-4f26-9b1d-0daa85b4ca28; slirequested=true; _hjSessionUser_2846427=eyJpZCI6IjgzYWUxYmYxLWZmZGYtNTRhNy05NmUxLTdlYjcyY2VjZTgyNCIsImNyZWF0ZWQiOjE3MTgxODE2ODQ3MTcsImV4aXN0aW5nIjp0cnVlfQ==; _ga=GA1.1.582262255.1718181683; _hjSession_2846427=eyJpZCI6ImIyYWQ5ODI2LWQ4ZTEtNDY0Zi1iNGUzLTZiMjdmY2UzZmViZSIsImMiOjE3MTkwNjI4OTk1MTAsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; slireg=https://scout.us1.salesloft.com; _gd_session=a79d5bb9-71c4-47a9-88af-e2e217fd88bb; _biz_nA=90; _ga_R6M33R23CY=GS1.1.1719062899.14.1.1719062910.0.0.0; _biz_pendingA=%5B%5D",
-        "priority": "u=1, i",
-        "sec-ch-ua": "\"Not/A)Brand\";v=\"8\", \"Chromium\";v=\"126\", \"Microsoft Edge\";v=\"126\"",
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": "\"Windows\"",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
-    }
-
-    # Send GET request to fetch company-specific content
+    querystring = {"id": f"{company_id}"}
     response = requests.get(url2, params=querystring, headers=headers)
     
-    # Parse the HTML response using BeautifulSoup
-    soup = BeautifulSoup(response.text, 'html.parser')
+    decoding_json=json.loads(response.text)
+    decoded_json=json.loads(decoding_json)
+    html=decoded_json['content']
     
-    # Find all anchor tags in the response
-    links = soup.find_all('a')
-
-    # Initialize a list to store unique links
-    unique_links=[]
-    for link in links:
-        href = link.get('href')
-        if href is not None:
-            href = href.replace('\\', '')  # Remove backslashes
-            if href not in unique_links:
-                unique_links.append(href)
+    soup = BeautifulSoup(html, 'html.parser')
+    links = [link.get('href', '').replace('\\', '') for link in soup.find_all('a') if link.get('href')]
+    company_links.append(list(set(links)))
     
-    # Append the unique links to the company_links list            
-    company_links.append(unique_links)
+    # Find the investment info section
+    info_div = soup.find('div', class_='partnership-content__roles')
+    
+    if info_div:
+        # Extract investment team (defaults to empty list if not found)
+        team_heading = info_div.find('span', class_='font-semibold', string='Investment Team')
+        if team_heading:
+            company_investment_team = [member.get_text(strip=True) 
+                                     for member in team_heading.find_next_siblings('span', class_='block')]
+        else:
+            company_investment_team=[]
             
-# Add the company links to the DataFrame   
-companies['links']=company_links
+        # Extract sectors (defaults to empty list if not found)
+        sectors_heading = info_div.find('span', class_='font-semibold', string='Sectors')
+        if sectors_heading:
+            company_sectors = [sector.get_text(strip=True) 
+                             for sector in sectors_heading.find_next_siblings('a', class_='block')]
+        else:
+            company_sectors = []
+        
+        # Extract tags (defaults to empty list if not found)
+        tags_heading = info_div.find('span', class_='font-semibold', string='Tags')
+        if tags_heading:
+            company_tags = [tag.get_text(strip=True) 
+                          for tag in tags_heading.find_next_siblings('span', class_='block')]
+        else:
+            company_tags = []
+        
+        # Extract initial investment (defaults to pd.NA if not found)
+        initial_heading = info_div.find('span', class_='font-semibold', string='Initial Investment')
+        if initial_heading:
+            company_initial_investment = initial_heading.find_next('span', class_='block').get_text(strip=True)
+        else:
+            company_initial_investment = []
+        
+        # Extract status (defaults to pd.NA if not found)
+        status_heading = info_div.find('span', class_='font-semibold', string='Status')
+        if status_heading:
+            company_status = status_heading.find_next('span', class_='block').get_text(strip=True)
+        else:
+            company_status = []
+    
+    # Append data to lists
+    investment_team_list.append(company_investment_team)
+    sectors_list.append(company_sectors)
+    tags_list.append(company_tags)
+    initial_investment_list.append(company_initial_investment)
+    status_list.append(company_status)
+
+companies['links'] = company_links
 print(companies.head(5))
-print(companies.info())
-test=companies
 
-# Change variable types for the dataframe
-companies[['slug','name','location','color','verticals','stage','logo','links']]=companies[['slug','name','location','color','verticals','stage','logo','links']].astype("string")
+# Data Processing
+companies[['slug', 'name', 'location', 'color', 'verticals', 'stage', 'logo', 'links']] = companies[
+    ['slug', 'name', 'location', 'color', 'verticals', 'stage', 'logo', 'links']].astype("string")
 
-# Clean and process DataFrame columns
-companies['verticals'] = companies['verticals'].str.replace("'","").str.replace("[","").str.replace("]","")
-companies['logo']=companies['logo'].apply(extract_url)
-companies['website']=companies['links'].apply(extract_website)
-companies['linkedin']=companies['links'].apply(extract_linkedin)
-companies['twitter']=companies['links'].apply(extract_twitter)
-companies['facebook']=companies['links'].apply(extract_facebook)
-companies['location']=companies['location'].str.replace("No Data Available, ","")
+companies['verticals'] = companies['verticals'].str.replace("'", "").str.replace("[", "").str.replace("]", "")
+companies['logo'] = companies['logo'].apply(extract_url)
+companies['website'] = companies['links'].apply(extract_website)
+companies['linkedin'] = companies['links'].apply(extract_linkedin)
+companies['twitter'] = companies['links'].apply(extract_twitter)
+companies['facebook'] = companies['links'].apply(extract_facebook)
+companies['location'] = companies['location'].str.replace("No Data Available, ", "")
+companies['investment_team'] = investment_team_list
+companies['sectors'] = sectors_list
+companies['tags'] = tags_list
+companies['initial_investment'] = initial_investment_list
+companies['status'] = status_list
 
-# Print the resulting dataframe
+# Review Dataframe
 companies
